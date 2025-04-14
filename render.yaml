@@ -12,7 +12,6 @@ services:
     name: training-tracker-app # Name for the Render web service
     runtime: python
     rootDir: Week - 2/Day - 3 # Set the root directory for build/start commands
-    pythonVersion: '3.10' # Specify Python version (must match project)
     buildCommand: "./build.sh" # Runs from rootDir (Week - 2/Day - 3)
     startCommand: "python -m gunicorn training_tracker.asgi:application -k uvicorn.workers.UvicornWorker" # Runs from rootDir
     envVars:
