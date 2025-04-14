@@ -24,7 +24,7 @@ services:
       - key: WEB_CONCURRENCY
         value: 4 # Adjust based on plan/needs
       - key: PYTHON_VERSION
-        value: '3.10' # Explicitly set for build environment
+        value: '3.10.11' # Specify full major.minor.patch version
       - key: DEBUG # Ensure DEBUG is False in production
         value: False
       # Render injects RENDER_EXTERNAL_HOSTNAME, used in settings.py
