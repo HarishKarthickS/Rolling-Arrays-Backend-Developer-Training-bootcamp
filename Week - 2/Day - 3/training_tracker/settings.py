@@ -30,15 +30,20 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-if-not-s
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = [] # Initialize as empty list
 
 # Get allowed hosts from environment variable set by Render (ALLOWED_HOSTS_ENV)
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('ALLOWED_HOSTS_ENV')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    # Add the Render domain to trusted origins for CSRF
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
 
 # Add localhost/127.0.0.1 for local development if DEBUG is True
 if DEBUG:
     ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
+    # Optionally add http://localhost for local CSRF testing if needed
+    # CSRF_TRUSTED_ORIGINS.extend(['http://localhost:8000', 'http://127.0.0.1:8000'])
 
 
 # Application definition
@@ -146,3 +151,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Tell Django to trust the X-Forwarded-Proto header from Render's proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Optional, but recommended for production:
+# SECURE_HSTS_SECONDS = 31536000 # Enable HSTS (HTTP Strict Transport Security) - start with a small value first
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
+# SECURE_SSL_REDIRECT = True # Redirect HTTP to HTTPS (Render usually handles this)
+# SESSION_COOKIE_SECURE = True # Use secure cookies for sessions
+# CSRF_COOKIE_SECURE = True # Use secure cookies for CSRF
