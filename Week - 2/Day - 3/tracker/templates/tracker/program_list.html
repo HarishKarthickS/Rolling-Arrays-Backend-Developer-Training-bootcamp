@@ -1,0 +1,35 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Training Programs{% endblock %}
+
+{% block content %}
+    <h2>Training Programs</h2>
+     <a href="{% url 'program_add' %}"><button>Add New Program</button></a>
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Trainer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for program in programs %}
+                <tr>
+                    <td>{{ program.title }}</td>
+                    <td>{{ program.description|truncatewords:15 }}</td>
+                    <td>{{ program.start_date }}</td>
+                    <td>{{ program.end_date }}</td>
+                    <td>{{ program.trainer_name }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No training programs found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %} 
