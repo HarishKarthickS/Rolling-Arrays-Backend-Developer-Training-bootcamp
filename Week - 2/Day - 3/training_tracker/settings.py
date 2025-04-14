@@ -23,28 +23,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Render will inject SECRET_KEY from envVars in render.yaml
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-key-if-not-set-locally') # Use fallback only for local dev
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback') # Ensure fallback exists
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG defaults to False in production unless DEBUG env var is explicitly 'True'
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = []
-CSRF_TRUSTED_ORIGINS = [] # Initialize as empty list
+CSRF_TRUSTED_ORIGINS = []
 
-# Get allowed hosts from environment variable set by Render (ALLOWED_HOSTS_ENV)
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('ALLOWED_HOSTS_ENV')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-    # Add the Render domain to trusted origins for CSRF
-    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_EXTERNAL_HOSTNAME}')
+# Get hostname from Render environment variable
+RENDER_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
-# Add localhost/127.0.0.1 for local development if DEBUG is True
-if DEBUG:
+if RENDER_HOSTNAME:
+    # Add the specific Render hostname
+    ALLOWED_HOSTS.append(RENDER_HOSTNAME)
+    CSRF_TRUSTED_ORIGINS.append(f'https://{RENDER_HOSTNAME}')
+    # Add wildcard for Render subdomains
+    ALLOWED_HOSTS.append(f'.{RENDER_HOSTNAME}') # e.g., .my-app.onrender.com
+    ALLOWED_HOSTS.append('.onrender.com') # Allow any *.onrender.com (for health checks etc.)
+    CSRF_TRUSTED_ORIGINS.append('https://*.onrender.com') # Trust any *.onrender.com for CSRF
+else:
+    # Allow localhost for local development if Render hostname not set (implies local)
     ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
-    # Optionally add http://localhost for local CSRF testing if needed
-    # CSRF_TRUSTED_ORIGINS.extend(['http://localhost:8000', 'http://127.0.0.1:8000'])
-
+    CSRF_TRUSTED_ORIGINS.extend(['http://localhost:8000', 'http://127.0.0.1:8000'])
 
 # Application definition
 
@@ -60,7 +62,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', # Temporarily comment out WhiteNoise for testing
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
