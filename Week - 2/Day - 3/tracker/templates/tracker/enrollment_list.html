@@ -1,0 +1,31 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Enrollments{% endblock %}
+
+{% block content %}
+    <h2>Enrollments</h2>
+    {# Add Enrollment Form Link/Button Here if needed later #}
+    <br><br>
+    <table>
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Training Program</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.employee.name }}</td>
+                    <td>{{ enrollment.training_program.title }}</td>
+                    <td>{{ enrollment.get_status_display }}</td> {# Use get_status_display for human-readable status #}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3">No enrollments found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %} 
