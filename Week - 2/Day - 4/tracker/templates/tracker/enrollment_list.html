@@ -1,0 +1,65 @@
+{% extends 'tracker/base.html' %}
+
+{% block title %}Enrollments{% endblock %}
+
+{% block content %}
+    <h2>Enrollments</h2>
+    <a href="{% url 'enrollment_add' %}"><button>Add New Enrollment</button></a>
+    
+    <div class="filter-section">
+        <h3 style="margin-top: 0;">Filters</h3>
+        <form method="get" action="{% url 'enrollment_list' %}">
+            <div class="flex-container">
+                <div class="flex-item">
+                    <label for="status">Status:</label>
+                    <select name="status" id="status">
+                        <option value="">All Statuses</option>
+                        {% for status_code, status_name in status_choices %}
+                            <option value="{{ status_code }}" {% if current_status == status_code %}selected{% endif %}>{{ status_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex-item">
+                    <label for="department">Department:</label>
+                    <select name="department" id="department">
+                        <option value="">All Departments</option>
+                        {% for department in departments %}
+                            <option value="{{ department }}" {% if current_department == department %}selected{% endif %}>{{ department }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div style="align-self: flex-end;">
+                    <button type="submit">Apply Filters</button>
+                    {% if current_status or current_department %}
+                        <a href="{% url 'enrollment_list' %}" style="margin-left: 10px;">Clear Filters</a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Department</th>
+                <th>Training Program</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.employee.name }}</td>
+                    <td>{{ enrollment.employee.department }}</td>
+                    <td>{{ enrollment.training_program.title }}</td>
+                    <td>{{ enrollment.get_status_display }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No enrollments found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %} 
