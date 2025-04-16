@@ -1,0 +1,119 @@
+{% extends 'tracker/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Dashboard - Training Tracker{% endblock %}
+
+{% block content %}
+    <h2 class="text-2xl font-bold text-primary border-b border-gray-200 pb-3 mb-6">Dashboard</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Employee Card -->
+        <div class="bg-blue-50 rounded-lg shadow-sm p-6 text-center">
+            <h3 class="text-blue-800 font-semibold mb-2">Employees</h3>
+            <p class="text-4xl font-bold text-blue-700 mb-3">{{ total_employees }}</p>
+            <a href="{% url 'employee_list' %}" class="inline-block text-blue-600 hover:underline">View All</a>
+        </div>
+        
+        <!-- Programs Card -->
+        <div class="bg-green-50 rounded-lg shadow-sm p-6 text-center">
+            <h3 class="text-green-800 font-semibold mb-2">Training Programs</h3>
+            <p class="text-4xl font-bold text-green-700 mb-3">{{ total_programs }}</p>
+            <a href="{% url 'program_list' %}" class="inline-block text-green-600 hover:underline">View All</a>
+        </div>
+        
+        <!-- Enrollments Card -->
+        <div class="bg-yellow-50 rounded-lg shadow-sm p-6 text-center">
+            <h3 class="text-yellow-800 font-semibold mb-2">Enrollments</h3>
+            <p class="text-4xl font-bold text-yellow-700 mb-3">{{ total_enrollments }}</p>
+            <a href="{% url 'enrollment_list' %}" class="inline-block text-yellow-600 hover:underline">View All</a>
+        </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <!-- Enrollment Status Chart -->
+        <div>
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">Enrollment Status</h3>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="space-y-3">
+                    {% for status_code, status_name in status_choices %}
+                        {% with count=status_counts|get:status_code|default:0 %}
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700">{{ status_name }}</span>
+                                <span class="text-gray-700 font-medium">{{ count }}</span>
+                            </div>
+                            <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
+                                {% if total_enrollments > 0 %}
+                                    <div class="h-full 
+                                    {% if status_code == 'ENROLLED' %}bg-blue-400
+                                    {% elif status_code == 'IN_PROGRESS' %}bg-green-400
+                                    {% else %}bg-yellow-400{% endif %}"
+                                    style="width: {{ count|div:total_enrollments|mul:100 }}%"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Department Distribution Chart -->
+        <div>
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">Department Distribution</h3>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="space-y-3">
+                    {% for dept, count in department_counts.items %}
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-gray-700">{{ dept }}</span>
+                                <span class="text-gray-700 font-medium">{{ count }}</span>
+                            </div>
+                            <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
+                                {% if total_employees > 0 %}
+                                    <div class="h-full bg-purple-400" style="width: {{ count|div:total_employees|mul:100 }}%"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Enrollments -->
+    <div class="mt-8">
+        <h3 class="text-xl font-semibold text-gray-700 mb-3">Recent Enrollments</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="py-3 px-4 text-left text-gray-700 font-semibold border-b">Employee</th>
+                        <th class="py-3 px-4 text-left text-gray-700 font-semibold border-b">Training Program</th>
+                        <th class="py-3 px-4 text-left text-gray-700 font-semibold border-b">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in recent_enrollments %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-3 px-4 border-b">{{ enrollment.employee.name }}</td>
+                            <td class="py-3 px-4 border-b">{{ enrollment.training_program.title }}</td>
+                            <td class="py-3 px-4 border-b">
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold
+                                {% if enrollment.status == 'ENROLLED' %}bg-blue-100 text-blue-800
+                                {% elif enrollment.status == 'IN_PROGRESS' %}bg-green-100 text-green-800
+                                {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                    {{ enrollment.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="py-4 px-4 text-center text-gray-500">No recent enrollments found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %} 
