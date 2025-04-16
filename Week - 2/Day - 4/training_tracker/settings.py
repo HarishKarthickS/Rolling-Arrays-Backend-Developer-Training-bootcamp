@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback') # En
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG defaults to False in production unless DEBUG env var is explicitly 'True'
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'  # Default to True for local development
 
 ALLOWED_HOSTS = []
 CSRF_TRUSTED_ORIGINS = []
@@ -95,15 +95,24 @@ WSGI_APPLICATION = 'training_tracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        # For Render deployment, this will be overridden by the DATABASE_URL env var.
-        default='postgresql://neondb_owner:npg_JXKb6TanF9Zt@ep-plain-bird-a1h3dut9-pooler.ap-southeast-1.aws.neon.tech/TaskApp?sslmode=require',
-        conn_max_age=600
-    )
-}
-
+# Use SQLite for local development and PostgreSQL for production (via Render)
+database_url = os.environ.get('DATABASE_URL')
+if database_url:
+    # Use PostgreSQL on Render (production)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=600
+        )
+    }
+else:
+    # Use SQLite for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
