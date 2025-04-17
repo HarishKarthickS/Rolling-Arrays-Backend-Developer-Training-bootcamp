@@ -11,7 +11,7 @@ services:
     plan: free # Or choose a paid plan
     name: training-tracker-app # Name for the Render web service
     runtime: python
-    rootDir: Week - 2/Day - 5 # Set the root directory for build/start commands
+    rootDir: Week - 2/Day - 6 # Set the root directory for build/start commands
     buildCommand: "./build.sh" # Runs from rootDir (Week - 2/Day - 3)
     startCommand: "python -m gunicorn training_tracker.asgi:application -k uvicorn.workers.UvicornWorker" # Runs from rootDir
     envVars:

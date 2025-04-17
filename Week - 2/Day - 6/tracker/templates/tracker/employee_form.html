@@ -1,0 +1,32 @@
+{% extends 'tracker/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Add Employee{% endblock %}
+
+{% block content %}
+    <h2 class="text-2xl font-bold text-primary border-b border-gray-200 pb-3 mb-6">Add New Employee</h2>
+    
+    <form method="post" class="max-w-lg">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="mb-4">
+                <label for="{{ field.id_for_label }}" class="block text-gray-700 font-medium mb-2">{{ field.label }}</label>
+                {{ field|add_class:"w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500" }}
+                {% if field.help_text %}
+                    <p class="text-sm text-gray-500 mt-1">{{ field.help_text }}</p>
+                {% endif %}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div class="flex items-center mt-6">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md shadow-sm">Save Employee</button>
+            <a href="{% url 'employee_list' %}" class="ml-4 text-gray-600 hover:text-gray-800">Cancel</a>
+        </div>
+    </form>
+{% endblock %} 
