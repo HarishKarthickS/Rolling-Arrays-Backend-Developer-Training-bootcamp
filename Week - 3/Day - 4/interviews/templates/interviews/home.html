@@ -1,0 +1,18 @@
+{% extends 'interviews/base.html' %}
+{% block title %}Home | Job Interview Scheduler{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card text-center p-5">
+            <h1 class="mb-4">Welcome to the <span style="color:#764ba2;">Job Interview Scheduler</span></h1>
+            <p class="lead mb-4">Easily manage applicants, interview slots, and assignments with a modern, elegant interface.</p>
+            <div class="d-grid gap-3">
+                <a href="/applicants/" class="btn btn-primary btn-lg">View Applicants</a>
+                <a href="/slots/" class="btn btn-primary btn-lg">View Interview Slots</a>
+                <a href="/assignments/" class="btn btn-primary btn-lg">View Assignments</a>
+                <a href="/assign/" class="btn btn-primary btn-lg">Assign Interview</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
