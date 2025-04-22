@@ -4,26 +4,34 @@
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card p-4">
-            <h2 class="mb-4">Assign Applicant to Interview Slot</h2>
+            <div class="d-flex align-items-center mb-4">
+                <h2 class="mb-0 flex-grow-1"><i class="bi bi-person-plus"></i> Assign Applicant to Interview Slot</h2>
+            </div>
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
                     <label for="applicant" class="form-label">Applicant:</label>
-                    <select name="applicant" id="applicant" class="form-select">
-                        {% for applicant in applicants %}
-                            <option value="{{ applicant.id }}">{{ applicant.name }} ({{ applicant.job_applied_for }})</option>
-                        {% endfor %}
-                    </select>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <select name="applicant" id="applicant" class="form-select">
+                            {% for applicant in applicants %}
+                                <option value="{{ applicant.id }}">{{ applicant.name }} ({{ applicant.job_applied_for }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="slot" class="form-label">Interview Slot:</label>
-                    <select name="slot" id="slot" class="form-select">
-                        {% for slot in slots %}
-                            <option value="{{ slot.id }}">{{ slot.date }} {{ slot.time }} - {{ slot.job_role }} ({{ slot.status }})</option>
-                        {% endfor %}
-                    </select>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                        <select name="slot" id="slot" class="form-select">
+                            {% for slot in slots %}
+                                <option value="{{ slot.id }}">{{ slot.date }} {{ slot.time }} - {{ slot.job_role }} ({{ slot.status }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Assign</button>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check2-circle"></i> Assign</button>
             </form>
             {% if error %}
                 <div class="alert alert-danger mt-3">{{ error }}</div>
