@@ -1,0 +1,94 @@
+{% extends 'interviews/base.html' %}
+{% block title %}Interview Slots | Job Interview Scheduler{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Interview Slots</h1>
+    
+    <form method="get" class="mb-4">
+        <div class="flex gap-4" style="flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="job_role">Job Role</label>
+                <input type="text" id="job_role" name="job_role" placeholder="Search by Job Role..." value="{{ job_role_query }}">
+            </div>
+            
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="status">Status</label>
+                <select name="status" id="status">
+                    <option value="">All</option>
+                    <option value="Available" {% if status_query == 'Available' %}selected{% endif %}>Available</option>
+                    <option value="Scheduled" {% if status_query == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+                    <option value="Completed" {% if status_query == 'Completed' %}selected{% endif %}>Completed</option>
+                    <option value="Cancelled" {% if status_query == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            
+            <div class="form-group" style="flex: 1; min-width: 200px;">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" value="{{ date_query }}">
+            </div>
+            
+            <div class="form-group" style="align-self: flex-end;">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+    
+    <div class="mb-4 text-center">
+        <p><strong>Status Legend:</strong></p>
+        <div class="flex gap-4" style="flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;">
+            <span class="badge badge-success">🟢 Available</span>
+            <span class="badge badge-warning">🕒 Scheduled</span>
+            <span class="badge badge-info">👍 Completed</span>
+            <span class="badge badge-danger">❌ Cancelled</span>
+        </div>
+    </div>
+    
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Job Role</th>
+                    <th>Interviewer</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                <tr>
+                    <td>{{ slot.date }}</td>
+                    <td>{{ slot.time }}</td>
+                    <td>{{ slot.job_role }}</td>
+                    <td>{{ slot.interviewer_name }}</td>
+                    <td>
+                        <span class="badge {% if slot.status == 'Available' %}badge-success{% elif slot.status == 'Scheduled' %}badge-warning{% elif slot.status == 'Completed' %}badge-info{% else %}badge-danger{% endif %}">
+                            {% if slot.status == 'Available' %}🟢{% elif slot.status == 'Scheduled' %}🕒{% elif slot.status == 'Completed' %}👍{% else %}❌{% endif %} 
+                            {{ slot.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'update_slot_status' slot.id %}" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Update</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 2rem;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <div style="font-size: 2rem;">📭</div>
+                            <div style="font-weight: 600;">No slots found.</div>
+                            <div style="font-size: 0.875rem; color: var(--text-light);">Try changing your filters.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{% url 'create_slot' %}" class="btn btn-primary">Add New Slot</a>
+    </div>
+</div>
+{% endblock %}
