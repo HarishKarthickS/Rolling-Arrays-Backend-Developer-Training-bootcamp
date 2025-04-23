@@ -1,0 +1,51 @@
+{% extends 'interviews/base.html' %}
+{% block title %}Assignments | Job Interview Scheduler{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Assignments</h1>
+    
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Interview Slot</th>
+                    <th>Job Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.applicant.name }}</td>
+                    <td>{{ assignment.interview_slot.date }} {{ assignment.interview_slot.time }}</td>
+                    <td>{{ assignment.interview_slot.job_role }}</td>
+                    <td>
+                        <span class="badge {% if assignment.interview_slot.status == 'Available' %}badge-success{% elif assignment.interview_slot.status == 'Scheduled' %}badge-warning{% elif assignment.interview_slot.status == 'Completed' %}badge-info{% else %}badge-danger{% endif %}">
+                            {% if assignment.interview_slot.status == 'Available' %}🟢{% elif assignment.interview_slot.status == 'Scheduled' %}🕒{% elif assignment.interview_slot.status == 'Completed' %}👍{% else %}❌{% endif %} 
+                            {{ assignment.interview_slot.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="flex gap-2">
+                            <a href="{% url 'update_slot_status' assignment.interview_slot.id %}" class="btn btn-primary" style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Update</a>
+                            <a href="{% url 'unassign' assignment.id %}" class="btn" style="padding: 0.25rem 0.75rem; font-size: 0.875rem; background-color: #fef2f2; color: var(--danger);">Unassign</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <div style="font-size: 2rem;">📄</div>
+                            <div style="font-weight: 600;">No assignments found.</div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

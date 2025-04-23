@@ -1,0 +1,44 @@
+{% extends 'interviews/base.html' %}
+{% block title %}Update Interview Slot Status{% endblock %}
+{% block content %}
+<div class="card">
+    <h1>Update Slot Status</h1>
+    
+    {% if form.errors %}
+    <div style="background-color: #fef2f2; color: var(--danger); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+        {{ form.errors }}
+    </div>
+    {% endif %}
+    
+    <div class="mb-4">
+        <p class="mb-4"><strong>Date:</strong> {{ slot.date }}</p>
+        <p class="mb-4"><strong>Time:</strong> {{ slot.time }}</p>
+        <p class="mb-4"><strong>Job Role:</strong> {{ slot.job_role }}</p>
+        <p class="mb-4"><strong>Interviewer:</strong> {{ slot.interviewer_name }}</p>
+        <p class="mb-4">
+            <strong>Current Status:</strong> 
+            <span class="badge {% if slot.status == 'Available' %}badge-success{% elif slot.status == 'Scheduled' %}badge-warning{% elif slot.status == 'Completed' %}badge-info{% else %}badge-danger{% endif %}">
+                {% if slot.status == 'Available' %}🟢{% elif slot.status == 'Scheduled' %}🕒{% elif slot.status == 'Completed' %}👍{% else %}❌{% endif %} 
+                {{ slot.status }}
+            </span>
+        </p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="status">New Status</label>
+            <select name="status" id="status" {% if not valid_statuses %}disabled{% endif %}>
+                {% for status in valid_statuses %}
+                <option value="{{ status }}">{{ status }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="flex gap-4 mt-4">
+            <button type="submit" class="btn btn-primary" {% if not valid_statuses %}disabled{% endif %}>Update Status</button>
+            <a href="{% url 'slot_list' %}" class="btn" style="background-color: var(--secondary); color: var(--text);">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
